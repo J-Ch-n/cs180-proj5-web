@@ -160,3 +160,7 @@ p {
     justify-content: center; 
     gap: 10px; 
 }
+
+h3 {
+    text-align: center;
+}
