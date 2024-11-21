@@ -1584,53 +1584,47 @@
 
                 <div class="text-container"> 
                     <p> 
-                        <B>TODO</B>
+                        Now it's time for something fun! In this section, I used the pretrained denoiser model to create various anagrams using two text prompts as guidances. The result should look like
+                        the first guidance prompt when rightside up and the second guidance prompt when upside down. To do so, I followed the following equations to process the estimated noise:
                     </p>
 
                     <p>
                         \[
-                        \epsilon_1 = \text{UNet}(x_t, t, p_1)
+                        \epsilon_1 = \text{UNet}(x_t, t, p_1) \tag{5}
                         \]
                         \[
-                        \epsilon_2 = \text{flip}(\text{UNet}(\text{flip}(x_t), t, p_2))
+                        \epsilon_2 = \text{flip}(\text{UNet}(\text{flip}(x_t), t, p_2)) \tag{6}
                         \]
                         \[
-                        \epsilon = (\epsilon_1 + \epsilon_2) / 2
+                        \epsilon = (\epsilon_1 + \epsilon_2) / 2 \tag{7}
                         \]
+                    </p>
+
+                    <p> 
+                        For the first text prompt \(p_1\), I used equation (5) to estimate the noises \(epsilon_1\) of the image at each time step. Then, I used equation (7) to retrieve the estimated noise in 
+                        the flipped image (along the height axis) using \(p_2\) as the conditional prompt. Finally, I used equation (7) to estimate the total noise by averaging the two estimated noises \(epsilon_1\) and \(epsilon_2\).
+                        Note that we also need CFG here, so I created the unconditional noises for both original and flipped images separately using the null prompt. Then, I applied the CFG algorithm separately to \(epsilon_1\) and \(epsilon_2\) 
+                        before I averaged them. The two prompts shared the same guidance scale. Everything else is the same as text-conditioned iterative denoising.
+                    </p>
+
+                    <p>
+                        Here are some of the results:
                     </p>
 
                     <div class="linear"> 
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/anagram/man_village.jpg", width="200">
+                                <img src="data_A/part 1/anagram/man_fire.jpg", width="300">
                                 <figcaption class="caption"> 
-                                    Sample 1
+                                    An Oil Painting of an Old Man
                                 </figcaption>
                             </figure>
                         </div>
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/anagram/man_village.jpg", width="200", style="transform: scaleY(-1);">
+                                <img src="data_A/part 1/anagram/man_fire.jpg", width="300", style="transform: scaleY(-1);">
                                 <figcaption class="caption"> 
-                                    Sample 2
-                                </figcaption>
-                            </figure>
-                        </div>
-                    </div>
-                    <div class="linear"> 
-                        <div class=image>
-                            <figure> 
-                                <img src="data_A/part 1/anagram/village_fire.jpg", width="200">
-                                <figcaption class="caption"> 
-                                    Sample 1
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class=image>
-                            <figure> 
-                                <img src="data_A/part 1/anagram/village_fire.jpg", width="200", style="transform: scaleY(-1);">
-                                <figcaption class="caption"> 
-                                    Sample 2
+                                    An Oil Painting of People around a Campfire
                                 </figcaption>
                             </figure>
                         </div>
@@ -1638,17 +1632,35 @@
                     <div class="linear"> 
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/anagram/man_fire.jpg", width="200">
-                                <figcaption class="caption"> 
-                                    Sample 1
+                                <img src="data_A/part 1/anagram/man_village.jpg", width="300">
+                                <figcaption class="caption">    
+                                    An Oil Painting of an Old Man
                                 </figcaption>
                             </figure>
                         </div>
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/anagram/man_fire.jpg", width="200", style="transform: scaleY(-1);">
+                                <img src="data_A/part 1/anagram/man_village.jpg", width="300", style="transform: scaleY(-1);">
                                 <figcaption class="caption"> 
-                                    Sample 2
+                                    An Oil Painting of a Snowy Mountain Village
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="linear"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/anagram/village_fire.jpg", width="300">
+                                <figcaption class="caption"> 
+                                    An Oil Painting of a Snowy Mountain Village
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/anagram/village_fire.jpg", width="300", style="transform: scaleY(-1);">
+                                <figcaption class="caption"> 
+                                    An Oil Painting of People around a Campfire
                                 </figcaption>
                             </figure>
                         </div>
@@ -1661,19 +1673,28 @@
 
                 <div class="text-container"> 
                     <p> 
-                        <B>TODO</B>
+                        We can also try to make some hybrid images that look like the first prompt when far away and the second prompt when close up. In principle, we can just take the low frequncyies of
+                        the image conditioned by the first prompt, take the high frequencies of the image conditioned by the second prompt, and average them together to get the final noise. The resulting image 
+                        should retain the low frequencies from the first prompt and the high frequencies from the second prompt, thus creating a hybrid effect. Here are the equations and how to use them.
                     </p>
 
                     <p>
                         \[
-                        \epsilon_1 = \text{UNet}(x_t, t, p_1)
+                        \epsilon_1 = \text{UNet}(x_t, t, p_1) \tag{8}
                         \]
                         \[
-                        \epsilon_2 = \text{UNet}(x_t, t, p_2)
+                        \epsilon_2 = \text{UNet}(x_t, t, p_2) \tag{9}
                         \]
                         \[
-                        \epsilon = f_\text{lowpass}(\epsilon_1) + f_\text{highpass}(\epsilon_2)
+                        \epsilon = f_\text{lowpass}(\epsilon_1) + f_\text{highpass}(\epsilon_2) \tag{10}
                         \]
+                    </p>
+
+                    <p> 
+                        Similar to A.1.8, I useded equation (8) to estimate the noises \(\epsilon_1\) of the image at each time step using the first prompt \(p_1\). Then, I used equation (9) to retrieve the estimated noise for 
+                        the second prompt \(p_2\). The only difference was that I didn't need to flip the image for the second prompt. Finally, I used two Gaussian blurs with kernel = 33 and sigma = 2 to retrieve the low frequency noises
+                        of \(\epsilon_1\) and \(\epsilon_2\). The high frequency noises of prompt two was the difference between the original image and the low frequency noises of prompt two. Using equation (10), I added the low frequency
+                        from prompt one to the high frequency from prompt two to get the final noise. I also used CFG for prompt one and prompt two separately and applied the guidance scale before adding the noises to get the final noise.
                     </p>
 
                     <div class="linear"> 
