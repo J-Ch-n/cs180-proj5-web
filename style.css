@@ -1,0 +1,162 @@
+/* Referenced https://v1.designsystem.digital.gov/components/colors/ */
+/* Referenced https://www.youtube.com/watch?v=i7uJAOFEd4g */
+p {
+    font-family:'Georgia';
+    text-align: left;
+    text-emphasis-color: #3E3E3E;
+    color: #3E3E3E;
+  }
+  
+  li {
+    font-family:'Georgia';
+    text-align: left;
+    text-emphasis-color: #3E3E3E;
+    color: #3E3E3E;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  .main {
+    display: flex;  
+    margin-right: 20px;
+    flex-grow: 1;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+    padding-left: 270px; 
+    padding-right: 20px; 
+    max-width: 100%; 
+    min-width: 300px;
+    align-items: center;
+  }
+  
+  .text-container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  /* Referenced https://css-tricks.com/snippets/css/complete-guide-grid/ and
+  https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Box_alignment_in_grid_layout*/
+  .image_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: auto; 
+    gap: 15px 20px;
+    background-color: white;
+  }
+  
+  .three_col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: auto; 
+    gap: 15px 20px;
+    background-color: white;
+  }
+  
+  .single_col {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); 
+    grid-template-rows: auto; 
+    gap: 15px 20px;
+    background-color: white;
+  }
+  .image_title {
+    text-align: center;
+  }
+  
+  .tri {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); 
+    grid-template-rows: auto; 
+    gap: 15px 20px;
+    background-color: white;
+  }
+  
+  .image {
+    background-color: white;
+    align-self: center;
+    justify-self: center;
+  }
+  
+  .caption {
+    text-align: center;
+    font-size: 10pt;
+  }
+  
+  .wrapper {
+    display: flex;
+    
+  }
+  
+  #sidebar {
+    width: 250px;
+    left: 0;
+    height: 100vh;
+    display: flex;
+    position: fixed;
+    background-color: #76837d;
+    flex-direction: column ;
+  }
+  
+  .sidebar-logo a{
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: 600;
+    color: #faf7ef;
+    text-decoration: none;
+    font-size: 30px
+  }
+  
+  .sidebar-nav-item {
+    list-style-type: none;
+    align-items: left;
+    margin-left: -5px;
+  }
+  
+  .sidebar-nav-item a {
+    text-decoration: none;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    font-size: large;
+  }
+  
+  #title {
+    text-align: center; 
+    flex: 1 100%;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .btn{
+    display: flex;
+    width: 200px;
+    height: 30px;
+    margin-top: 10px;
+    background-color: #b0b0b0;
+  }
+
+  code {
+    background-color: #f4f4f4;
+    padding: 5px;
+    border-radius: 5px;
+ }   
+
+ .linear {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+}

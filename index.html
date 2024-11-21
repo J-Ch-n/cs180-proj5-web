@@ -1,0 +1,438 @@
+<!-- Referenced https://www.youtube.com/watch?v=i7uJAOFEd4g -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>CS180 Proj 5</title>
+        <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div id="sidebar"> 
+                <div class="sidebar-logo">
+                    <a href="#title">Navigation</a>
+                </div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part0">
+                                <span>Part A.0</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part1">
+                                <span>Part A.1.1</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part2">
+                                <span>Part A.1.2</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part3">
+                                <span>Part A.1.3</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part4">
+                                <span>Part A.1.4</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part5">
+                                <span>Part A.1.5</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part6">
+                                <span>Part A.1.6</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part7">
+                                <span>Part A.1.7</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part8">
+                                <span>Part A.1.8</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#part9">
+                                <span>Part A.1.9</span>
+                            </a>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <!-- End of sidebar -->
+             
+            <div class="main">
+                <h1 id="title"> CS180 Project 5 </h1>
+                <h2 id="part1"> Part A.1.1: Implementing the Forward Process</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        To add noises, we follow the following formula:
+                        \[
+                        q(x_t | x_0) = N(x_t ; \sqrt{\bar\alpha} x_0, (1 - \bar\alpha_t)\mathbf{I})
+                        \]
+                        After simplification, we arrive at the following equivlaent form:
+                        \[
+                        x_t = \sqrt{\bar\alpha_t} x_0 + \sqrt{1 - \bar\alpha_t} \epsilon \quad \text{where}~ \epsilon \sim N(0, 1) \tag{0}
+                        \]
+                        This means that we need to sample from a standard normal distribution and call it \( \epsilon \). For each \(\bar\alpha_t\) from 
+                        the alphas_cumprod variable from the scheduler, indexed by t, we iteratively add noises to our clean image. 
+                        Here, we display the Campanile with noises added at \(t \in [250, 500, 750]\):
+                    </p>  
+
+                    <p> 
+                        I'm using seed = 22 for this problem.
+                    </p>
+                    
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Berkeley Campanile
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <div class="three_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_nl_250.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=250
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_nl_500.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=500
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_nl_750.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=750
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of A.1.1-->
+                <h2 id="part2"> Part A.1.2: Classical Denoising</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                       In this section, I attempted to use classical methods to denoise the test images from the previous part.
+                       I used torchvision.transforms.functional.gaussian_blur (kernel = 9, sigma = 2) in order to get the denoised versions of the images. 
+                       The results are not satisfactory at all, especially the for the image with larger t.
+                    </p>  
+
+                    <p> 
+                        I'm using seed = 22 for this problem.
+                    </p>
+                
+
+                    <div class="three_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_nl_250.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=250
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_nl_500.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=500
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_nl_750.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=750
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_denoise_250_k_9_s_2.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Gaussian Blur Denoising <br/> at t=250
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_denoise_500_k_9_s_2.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Gaussian Blur Denoising <br/> at t=500
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_denoise_750_k_9_s_2.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Gaussian Blur Denoising <br/> at t=750
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of A.1.2-->  
+                <h2 id="part3"> Part A.1.3: One-Step Denoising</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                       In this section, I attempted to denoise the noisy test images using a the pretrained unet. The unet will 
+                       estimate both the noise of the current time step. I passed in the noisy image, the time step t, and the prompt embedding into the unet, after which 
+                       I used output to reconstruct the denoised image using the following formula.
+
+                       \[
+                        x_0 = \frac{x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon}{\sqrt{\bar{\alpha}_t}} \tag{1}
+                       \]
+
+                       where \(x_0\) is the clean image, \(x_t\) is the noisy image, \(\epsilon\) is the estimated noise, 
+                       and \(\bar{\alpha}_t\) is the alphas_cumprod variable from the scheduler, indexed by t.
+
+                       The following are the results from the denoisign process.
+                    </p>  
+
+                    <p> 
+                        I'm using seed = 22 for this problem.
+                    </p>
+                
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Berkeley Campanile
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    
+                    <div class="three_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_noise_est_250.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=250
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_noise_est_500.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=500
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_noise_est_750.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=750
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_unet_denoise_250.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    One-Step Denoised Campanile<br/> at t=250
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_unet_denoise_500.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    One-Step Denoised Campanile<br/> at t=500
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image_unet_denoise_750.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    One-Step Denoised Campanile<br/> at t=750
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of A.1.3-->  
+                <h2 id="part4"> Part A.1.4:  Iterative Denoising</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                       In this section, I used iterative denoising to achieve more optimal results than one-step denoising. I started with the most noisy time step, \(T = 990\) and iteratively
+                       denoised the image with the stride size of -30 until T reached 0. The list of Ts are in the variable called strided timesteps. 
+
+                       In a for loop, I looped through each value of strided timesteps and denoised the image for each time step t. 
+
+                       The algorithm is as follows:
+                    </p>  
+
+                    <p> 
+                        For each t, I used the following formula to reconstruct the denoised image at that time step.
+
+                        \[
+                        x_{t'} = \frac{\sqrt{\bar\alpha_{t'}}\beta_t}{1 - \bar\alpha_t} x_0 +
+                        \frac{\sqrt{\alpha_t}(1 - \bar\alpha_{t'})}{1 - \bar\alpha_t} x_t +
+                        v_\sigma \tag{2}
+                        \]
+
+                        Where:
+                    </p>
+                    <ul>
+                        <li><strong>\( t' \):</strong> The previous (index + 1) time step relative to the current time step \( t \).</li>
+                        <li><strong>\( \bar{\alpha}_{t'} \):</strong> The cumulative product found in alphas_cumprod at time step \( t' \).</li>
+                        <li><strong>\( x_{t'} \):</strong> The denoised image at time step \( t' \).</li>
+                        <li><strong>\( \bar{\alpha}_t \):</strong> The cumulative product found in alphas_cumprod at time step \( t \).</li>
+                        <li><strong>\( \alpha_t \):</strong> \(\frac{\bar\alpha_t}{\bar\alpha_{t'}}\)</li>
+                        <li><strong>\( \beta_t \):</strong> \(1 - \alpha_t\)</li> 
+                        <li><strong>\( x_t \):</strong> The noisy image at time step \( t \).</li>
+                        <li><strong>\( x_0 \):</strong> The current state of the cleaned image at time step \( t \), retrieved using equation (1). </li>
+                        <li><strong>\( v_\sigma \):</strong> The predicted noise variance form the unet.</li>
+                    </ul>
+
+                    <p> Specific details about implementation: 
+                        <ul>
+                            <li> I used <code>add_variance</code> function to add the predicted variance from the unet to the denoised image.</li>
+                            <li> I used <code>i_start = 10</code> as the starting time step.</li>
+                        </ul>
+                    </p>
+
+                    <p> 
+                        I'm using seed = 22 for this problem. Here are the results.
+                    </p>
+                
+                    <div class="linear"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/test_image.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Berkeley Campanile Original
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_clean_final.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Iteratively Denoised Campanile
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_clean_one_step.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    One-Step Denoised Campanile
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_gaus.png", width="200">
+                                <figcaption class="caption"> 
+                                    Gaussian Blurred Campanile
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    
+                    <div class="linear"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_unet_denoise_90.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=90
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_unet_denoise_240.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=240
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_unet_denoise_390.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=390
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_unet_denoise_540.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=540
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/iter/test_image_iter_unet_denoise_690.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Noisy Campanile at t=690
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of A.1.4-->  
+            </div>
+        </div>
+    </body>
+</html>
