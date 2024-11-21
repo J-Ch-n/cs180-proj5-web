@@ -346,6 +346,7 @@
                         <ul>
                             <li> I used <code>add_variance</code> function to add the predicted variance from the unet to the denoised image.</li>
                             <li> I used <code>i_start = 10</code> as the starting time step.</li>
+                            <li> I used the estimated noise from the unet as \(\epsilon\) in equation (1) to get \( x_0 \).</li>
                         </ul>
                     </p>
 
@@ -432,6 +433,118 @@
                     </div>
                 </div>  
                 <!-- End of A.1.4-->  
+                <h2 id="part5"> Part A.1.5: Diffusion Model Sampling</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                       In this section, used the trained unet diffusion model to denoise pure noise with the embedded guidance of "a high quality photo". To denoise images from random
+                       noises, I set <code>i_start = 0</code> and passed in a random noise, sampled from a standard normal distribution, with the shape of (5, 1, 28, 28), five images sampled at once. The model sampling/ reconstruction loop is the same as A.1.4.
+                    </p>
+
+                    <p> 
+                        Though the following sampled images are not very good, they are decent in quality.
+                    </p>
+
+                    <div class="linear"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_0.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 1
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_1.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 2
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_2.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 3
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_3.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 4
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_4.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 5
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of A.1.5-->  
+                <h2 id="part6"> Part A.1.6: Classifier-Free Guidance (CFG)</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                       In this section, used the trained unet diffusion model to denoise pure noise with the embedded guidance of "a high quality photo". To denoise images from random
+                       noises, I set <code>i_start = 0</code> and passed in a random noise, sampled from a standard normal distribution, with the shape of (5, 1, 28, 28), five images sampled at once. The model sampling/ reconstruction loop is the same as A.1.4.
+                    </p>
+
+                    <p> 
+                        Though the following sampled images are not very good, they are decent in quality.
+                    </p>
+
+                    <div class="linear"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_0.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 1
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_1.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 2
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_2.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 3
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_3.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 4
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/sampling/img_4.jpg", width="200">
+                                <figcaption class="caption"> 
+                                    Sample 5
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of A.1.6-->  
             </div>
         </div>
     </body>
