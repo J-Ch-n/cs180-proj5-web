@@ -440,7 +440,7 @@
                 <div class="text-container"> 
                     <p> 
                        In this section, I attempted to use classical methods to denoise the test images from the previous part.
-                       I used torchvision.transforms.functional.gaussian_blur (kernel = 9, sigma = 2) in order to get the denoised versions of the images. 
+                       I used torchvision.transforms.functional.gaussian_blur (kernel = 9, sigma = 2) in order to get the denoised (blurred) versions of the images. 
                        The results are not satisfactory at all, especially the for the image with larger t.
                     </p>  
 
@@ -537,7 +537,7 @@
                     <div class="three_col"> 
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/test_image_noise_est_250.jpg", width="200">
+                                <img src="data_A/part 1/test_image_noisy_250.jpg", width="200">
                                 <figcaption class="caption"> 
                                     Noisy Campanile at t=250
                                 </figcaption>
@@ -545,7 +545,7 @@
                         </div>
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/test_image_noise_est_500.jpg", width="200">
+                                <img src="data_A/part 1/test_image_noisy_500.jpg", width="200">
                                 <figcaption class="caption"> 
                                     Noisy Campanile at t=500
                                 </figcaption>
@@ -553,7 +553,7 @@
                         </div>
                         <div class=image>
                             <figure> 
-                                <img src="data_A/part 1/test_image_noise_est_750.jpg", width="200">
+                                <img src="data_A/part 1/test_image_noisy_750.jpg", width="200">
                                 <figcaption class="caption"> 
                                     Noisy Campanile at t=750
                                 </figcaption>
@@ -717,7 +717,7 @@
                 <div class="text-container"> 
                     <p> 
                        In this section, used the trained unet diffusion model to denoise pure noise with the embedded guidance of "a high quality photo". To denoise images from random
-                       noises, I set <code>i_start = 0</code> and passed in a random noise, sampled from a standard normal distribution, with the shape of (5, 1, 64, 64), five images sampled at once. The model sampling/ reconstruction loop is the same as A.1.4.
+                       noises, I set <code>i_start = 0</code> and passed in a random noise, sampled from a standard normal distribution, with the shape of (5, 3, 64, 64), five images sampled at once. The model sampling/ reconstruction loop is the same as A.1.4.
                     </p>
 
                     <p> 
@@ -1107,6 +1107,15 @@
                         </div>
                         <div class=image>
                             <figure> 
+                                <img src="data_A/part 1/hand-web/kangaroo_start_9.jpg", width="130">
+                                <figcaption class="caption"> 
+                                    Kangaroo at <br/> 
+                                    <code>i_start = 9</code>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
                                 <img src="data_A/part 1/hand-web/kangaroo_start_10.jpg", width="130">
                                 <figcaption class="caption"> 
                                     Kangaroo at <br/> 
@@ -1175,6 +1184,15 @@
                         </div>
                         <div class=image>
                             <figure> 
+                                <img src="data_A/part 1/hand-web/leaf_9.jpg", width="130">
+                                <figcaption class="caption"> 
+                                    Leaf at <br/> 
+                                    <code>i_start = 9</code>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
                                 <img src="data_A/part 1/hand-web/leaf_10.jpg", width="130">
                                 <figcaption class="caption"> 
                                     Leaf at <br/> 
@@ -1238,6 +1256,15 @@
                                 <figcaption class="caption"> 
                                     Tree at <br/> 
                                     <code>i_start = 7</code>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_A/part 1/hand-web/tree_9.jpg", width="130">
+                                <figcaption class="caption"> 
+                                    Tree at <br/> 
+                                    <code>i_start = 9</code>
                                 </figcaption>
                             </figure>
                         </div>
@@ -1650,9 +1677,9 @@
                     </p>
 
                     <p> 
-                        For the first text prompt \(p_1\), I used equation (5) to estimate the noises \(epsilon_1\) of the image at each time step. Then, I used equation (7) to retrieve the estimated noise in 
-                        the flipped image (along the height axis) using \(p_2\) as the conditional prompt. Finally, I used equation (7) to estimate the total noise by averaging the two estimated noises \(epsilon_1\) and \(epsilon_2\).
-                        Note that we also need CFG here, so I created the unconditional noises for both original and flipped images separately using the null prompt. Then, I applied the CFG algorithm separately to \(epsilon_1\) and \(epsilon_2\) 
+                        For the first text prompt \(p_1\), I used equation (5) to estimate the noises \(\epsilon_1\) of the image at each time step. Then, I used equation (7) to retrieve the estimated noise in 
+                        the flipped image (along the height axis) using \(p_2\) as the conditional prompt. Finally, I used equation (7) to estimate the total noise by averaging the two estimated noises \(\epsilon_1\) and \(\epsilon_2\).
+                        Note that we also need CFG here, so I created the unconditional noises for both original and flipped images separately using the null prompt. Then, I applied the CFG algorithm separately to \(\epsilon_1\) and \(\epsilon_2\) 
                         before I averaged them. The two prompts shared the same guidance scale. Everything else is the same as text-conditioned iterative denoising.
                     </p>
 
@@ -1783,9 +1810,9 @@
 
                 <div class="text-container"> 
                     <p> 
-                        In this section, I impleemented the unconditional UNet using various convolutional blocks and concatination layers. The high level idea of this UNet is that it 
-                        downsamples the image from the original size into a 1 by 1 by 2D tensor, learning features along the way. Then, it upsamples the image from the 1 by1 by 2D tesnor back into the 
-                        original size, combining the results from downsampling along the way through concatination. 
+                        In this section, I implemented the unconditional UNet using various convolutional blocks and concatination layers. The high level idea of this UNet is that it 
+                        downsamples the image from the original size into a 1 by 1 by 2D tensor, learning the image along the way. Then, it upsamples the image from the 1 by 1 by 2D tesnor back into the 
+                        original size, combining the results from downsampling along the way through concatination. This structure can be used to transform the input image.
                     </p>
 
                     <p>
@@ -1807,19 +1834,23 @@
                         To implement the UNet, I added both the block initilization and the forward method of each block. Then, I combined everything into the UNet class, adding necessary layers and filling in the 
                         foward methods. After constructing the UNet architecture, I'm ready to start training a denoiser for the MNIST dataset.
                     </p>
+
+                    <p> 
+                        I used 22 as the <code>SEED</code>.
+                    </p>
                 </div>  
                 <!-- End of A.2.1--> 
                 <h2 id="partB.1.2"> Part B.1.2: Using the UNet to Train a Denoiser</h2>
 
                 <div class="text-container"> 
                     <p> 
-                        To train the network, I need to identify a loss funciton first. Per the spec's suggestion, I used an average L2 loss between the estimated clean image and the true clean image.
+                        To train the network, I needed to identify a loss funciton first. Per the spec's suggestion, I used an average L2 loss between the estimated clean image and the true clean image.
                         Here is the loss function:
                     </p>
 
                     <p>
                         \[
-                            L = \mathbb{E}_{z,x} D_{\theta}(z) - x\|^2. \tag{11}
+                            L = \mathbb{E}_{z,x}\| D_{\theta}(z) - x\|^2. \tag{11}
                         \]
                         Where: 
                         <ul> 
@@ -1871,7 +1902,7 @@
 
                     <p> 
                         Note that I only added noise to the train images right before it was fed into the model so that the model can see a 
-                        different noise each time. Within the training loop, I also collected the training loss and graphed the output at 
+                        different noise each time. The noise at each time step was added using equation (12). Within the training loop, I also collected the training loss and graphed the output at 
                         appropriate intervals. Here are the results:
                     </p>
 
@@ -1965,7 +1996,7 @@
                     <p> 
                         To add time conditioning so that we can train the model to predict noise at each time step, we first needed to change the model structure.
                         We added an additional parameter, called t, to the model function signature. Under the hood, we used an FCBlock to embed the scalar t to fit 
-                        the dimension of the convolutional layers. Then we added the embedded t to the unflattened and first upsampled blocks of the architecture. Here is a diagram:
+                        the dimension of the convolutional layers. Then we added the embedded t to the unflattened and the first upsampled blocks of the architecture. Here is a diagram:
                     </p>
 
                     <div class="single_col"> 
@@ -1985,7 +2016,7 @@
 
                     <p> 
                         To construct the training loop, I first set up a training schedule that contained precomputed \(\beta_t\), \(\alpha_t = 1 - \beta_t\), and \(\bar\alpha_t = \prod_{s=1}^t \alpha_s\). I first calculated \(\beta_t\), which was
-                        a list of integers from 0 to T with the length of <code>num_ts</code>. Then I found the rest of the variables using this piece of information.
+                        a list of numbers that were evenly space from 0.0001 to 0.02 with the total length being 300. Then I found the rest of the variables using this piece of information.
                     </p>
 
                     <p>
@@ -2005,11 +2036,11 @@
 
                     <p>
                         I got the precomputed \(\bar\alpha\) from the scheduler. For each time step t, I sampled the noise from a standard normal distribution and added the noise to the image 
-                        according to equation (0). Then, I passed the noise and the normalized t into the model to get the predicted noise, after which I minized the loss. I repeated this process for the number of epochs.
+                        according to equation (0). Then, I passed the noise and the normalized t into the model to get the predicted noise, after which I minimized the loss. I repeated this process for the number of epochs.
                     </p>
 
                     <p>
-                        The training parameters stayed similar except that I used a exponential learning rate scheduler to slow down after each epoch. The number of epochs was increased to 20, and the hidden dimension was decreased to 64.
+                        The training parameters stayed similar except that I used an exponential learning rate scheduler to slow down the gradient descent after each epoch. The number of epochs was increased to 20, and the hidden dimension was decreased to 64.
                     </p>
 
                     <p>
@@ -2097,14 +2128,15 @@
 
                 <div class="text-container"> 
                     <p> 
-                        I added two more FCBlocks for the class conditional UNet. Each block takes in the one-hot encoded class condtioner and embeds it to fit the dimension fo the convolutional 
+                        I added two more FCBlocks for the class conditional UNet. Each block takes in the one-hot encoded class condtioner and embeds it to fit the dimension of the convolutional 
                         layers. The first embedded class vector was added to the unflattened tensor via direct product (before adding time conditioning). The second class embedding was added to the upsample 1 
-                        tensor through direct product as well before adding time conditioning. I also added a dropout mask to ensure tha we only consider class conditioning 90% of the time.
+                        tensor through direct product as well before adding time conditioning. I also added a dropout mask (a tensor of zeros) to ensure tha we only consider class conditioning 90% of the time.
                     </p>
 
                     <p> 
                        The training loop for this section is very similar to the one for teim conditioning. The only difference was that we needed to use the labels as one-hot encoded condition vector. We also needed
-                       to apply dropout 10% of the time as well.
+                       to apply dropout 10% of the time as well. I used a Bernoulli random variable as the indictor with 90% of success rate and 10% of failure rate. If the random variable fails (returns 0), I would 
+                       multiply the one-hot encoded class with the mask to set it to zero.
                     </p>
 
                     <p>
@@ -2123,8 +2155,8 @@
                     </div>
 
                     <p>
-                        I got the precomputed \(\bar\alpha\) from the scheduler. For each time step t, I sampled the noise from a standard normal distribution and added the noise to the image 
-                        according to equation (0). Then, I passed the noise and the normalized t into the model to get the predicted noise, after which I minized the loss. I repeated this process for the number of epochs.
+                        I got the precomputed \(\bar\alpha\) from the scheduler. For each time step t, I sampled the noise from a standard normal distribution andadded the noise to the image 
+                        according to equation (0). Then, I passed the noise, the normalized t, and the class conditioning vectors into the model to get the predicted noise, after which I minimized the loss. I repeated this process for the number of epochs.
                     </p>
 
                     <p>
@@ -2156,7 +2188,7 @@
                             <figure> 
                                 <img src="data/algo4_c.png", width="800">
                                 <figcaption class="caption"> 
-                                    Time-Conditioned UNet sampling algorithm
+                                    Class-Conditioned UNet sampling algorithm
                                 </figcaption>
                             </figure>
                         </div>
@@ -2164,7 +2196,8 @@
 
                     <p> 
                         The general approach was similar to the one for time-conditioned UNet. The only difference was that I added an unconditional guidance and added it with the guided
-                        noise under the guidance scale. The process is the same as the CFG in part A. I chose the guidance scale to be 5. Here are some results:
+                        noise under the guidance scale. More concretely, I called the UNet model twice, once on the unconditional prompt (tensor of all zeros) and once one the one-hot encoded 
+                        classes that I wanted to generate. The process is the same as the CFG in part A. I chose the guidance scale to be 5. Here are some results:
                     </p>
 
                     <div class="image_container"> 
@@ -2211,6 +2244,16 @@
                     </div>
                 </div>  
                 <!-- End of B.2.5-->
+                <h2 id="conclusion"> Conclusion </h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        This is by far the most interesting and rewarding project I have ever done. I got a chance to learn so much about image-to-image translation from theory to implementation, from seed to fruition. 
+                        As fun as this project is, it wasn't without many challenges. I had to familiarize myself with Google Colab very quickly and learn to use GPU resources efficiently. There were several bugs that
+                        seemed impossible to solve, but I managed to locate the mistakes and eradicate them on time. I would love to do more projects like this in the future.
+                    </p>
+                </div>  
+                <!-- End of Conclusion-->
             </div>
         </div>
     </body>
