@@ -90,6 +90,55 @@
                             </a>
                         </button>
                     </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.1.1">
+                                <span>Part B.1.1</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.1.2">
+                                <span>Part B.1.2</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.2.1">
+                                <span>Part B.2.1</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.2.1">
+                                <span>Part B.2.2</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.2.1">
+                                <span>Part B.2.3</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.2.4">
+                                <span>Part B.2.4</span>
+                            </a>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="btn btn-light">
+                            <a href="#partB.2.4">
+                                <span>Part B.2.5</span>
+                            </a>
+                        </button>
+                    </li>
                 </ul>
             </div>
             <!-- End of sidebar -->
@@ -1669,7 +1718,7 @@
                 </div>  
                 <!-- End of A.1.8--> 
                 
-                <h2 id="part8"> Part A.1.9: Hybrid Images</h2>
+                <h2 id="part9"> Part A.1.9: Hybrid Images</h2>
 
                 <div class="text-container"> 
                     <p> 
@@ -1730,6 +1779,438 @@
                     </div>
                 </div>  
                 <!-- End of A.1.9--> 
+                <h2 id="partB.1.1"> Part B.1.1: Implementing the UNet</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        In this section, I impleemented the unconditional UNet using various convolutional blocks and concatination layers. The high level idea of this UNet is that it 
+                        downsamples the image from the original size into a 1 by 1 by 2D tensor, learning features along the way. Then, it upsamples the image from the 1 by1 by 2D tesnor back into the 
+                        original size, combining the results from downsampling along the way through concatination. 
+                    </p>
+
+                    <p>
+                        Here is the general architecture of the UNet (borrowed from the project spec):
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data/unconditional_arch.png", width="500">
+                                <figcaption class="caption"> 
+                                    Uncondtional UNet
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        To implement the UNet, I added both the block initilization and the forward method of each block. Then, I combined everything into the UNet class, adding necessary layers and filling in the 
+                        foward methods. After constructing the UNet architecture, I'm ready to start training a denoiser for the MNIST dataset.
+                    </p>
+                </div>  
+                <!-- End of A.2.1--> 
+                <h2 id="partB.1.2"> Part B.1.2: Using the UNet to Train a Denoiser</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        To train the network, I need to identify a loss funciton first. Per the spec's suggestion, I used an average L2 loss between the estimated clean image and the true clean image.
+                        Here is the loss function:
+                    </p>
+
+                    <p>
+                        \[
+                            L = \mathbb{E}_{z,x} D_{\theta}(z) - x\|^2. \tag{11}
+                        \]
+                        Where: 
+                        <ul> 
+                            <li>\(D_{\theta}(z)\) is the estimated clean image from the model.</li>
+                            <li>\(x\) is the original image.</li>
+                        </ul>
+                    </p>
+
+                    <p> 
+                        To prepare the data for training, I artificially added noises to the MNIST train dataset using the following equation: 
+                    </p>
+
+                    <p>
+                       \[
+                       z = x + \sigma \epsilon,\quad \text{where }\epsilon \sim N(0, I). \tag{12}
+                       \]
+                    </p>
+
+                    <p> 
+                        For demonstration, I used \(\sigma = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]\) to add noises to the numbers 7, 2, 1, 0, and 4. Here is the result.
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/noisy_numbers.jpg", width="1000">
+                                <figcaption class="caption"> 
+                                    Varying levels of noise on MNIST digits
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of B.2--> 
+                <h2 id="partB.1.2.1"> Part B.1.2.1: Training </h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        I constructed a training loop that trains the UNet for 5 epochs on the shuffle MNIST train dataset. I started to train the denoiser using the following parameters:
+                    </p>
+                    
+                    <ul>
+                        <li> \(\text{D} = 128\)</li> 
+                        <li> \(\text{Number of epochs} = 5\)</li>
+                        <li> \(\text{Batch size} = 256\)</li>
+                        <li> \(\text{learning rate} = 0.0001\)</li>
+                        <li> \(\text{Optimizer} = Adam \)</li>
+                    </ul>
+
+                    <p> 
+                        Note that I only added noise to the train images right before it was fed into the model so that the model can see a 
+                        different noise each time. Within the training loop, I also collected the training loss and graphed the output at 
+                        appropriate intervals. Here are the results:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/uncond_train_losses.jpg", width="800">
+                                <figcaption class="caption"> 
+                                    Uncondtional Model Training Loss Curve
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/uncond_results_1.jpg", width="800">
+                                <figcaption class="caption"> 
+                                    Results on digits from the test set after 1 epoch of training.
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/uncond_results_5.jpg", width="800">
+                                <figcaption class="caption"> 
+                                    Results on digits from the test set after 5 epoch of training.
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        The training loss showed a drastic decrease in epoch 1 and gradually levels off at a very small number.
+                        The results on the digits from the test set after 1 epoch was not as accurate and defined as the ones after
+                        5 epochs of training, which was expected.
+                    </p>
+                </div>  
+                <!-- End of B.1.2.1--> 
+                <h2 id="partB.1.2.1"> Part B.1.2.2: Out-of-Distribution Testing </h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        After the model had been trained for 5 epochs, I applied the model to the same number 7 image with different levels of noises.
+                        For each \(\sigma\) in the list \(\sigma = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]\), I added noises to the number 7 and then 
+                        used the model to predict the denoised image. Here are the results:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/out_of_dist_test.jpg", width="800">
+                                <figcaption class="caption"> 
+                                    Uncondtional Model Training Loss Curve
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        The denoised results were very good for \(\sigma <= 0.5\). For \(\sigma > 0.5\), the model tended to add some artifacts to the image probably because the
+                        model was not trained to handle more these higher noise levels. Our current model still needed improvment.
+                    </p>
+                </div>  
+                <!-- End of B.1.2.2--> 
+                <h2 id="partB.2"> Part B.2: Training a Diffusion Model</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        With the unconditional UNet under our belts, we could train a similar network to estimate the noise at each level, thus building ourselves a diffusion model.
+                        The new objective begged for a new objective funciton. Instead of minimizing the loss between the estimated final image and the original image, we minimized 
+                        the L2 (MSE) difference between the predicted noise and the true noise. 
+                        
+                        \[
+                        L = \mathbb{E}_{\epsilon,z} \|\epsilon_{\theta}(z) - \epsilon\|^2 \tag{13}
+                        \]
+
+                        where \(\epsilon_{\theta}(z)\) is the predicted noise from the UNet.
+                    </p>
+
+                    <p>
+                        To add noise, we used equation (0) from part A at each time step in the training process.
+                    </p>
+                </div>  
+                <!-- End of B.2-->
+                <h2 id="partB.2.1"> Part B.2.1 - B.2.3: Adding Time Conditiong to UNet</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        To add time conditioning so that we can train the model to predict noise at each time step, we first needed to change the model structure.
+                        We added an additional parameter, called t, to the model function signature. Under the hood, we used an FCBlock to embed the scalar t to fit 
+                        the dimension of the convolutional layers. Then we added the embedded t to the unflattened and first upsampled blocks of the architecture. Here is a diagram:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data/time_conditional_arch.png", width="800">
+                                <figcaption class="caption"> 
+                                    Time Conditioned Model Architecture
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p>
+                        The FCBlock consists of two fully connected layers and one layer of GELU activation. It can embed the scaler t and make it understandable to our model.
+                    </p>
+
+                    <p> 
+                        To construct the training loop, I first set up a training schedule that contained precomputed \(\beta_t\), \(\alpha_t = 1 - \beta_t\), and \(\bar\alpha_t = \prod_{s=1}^t \alpha_s\). I first calculated \(\beta_t\), which was
+                        a list of integers from 0 to T with the length of <code>num_ts</code>. Then I found the rest of the variables using this piece of information.
+                    </p>
+
+                    <p>
+                        The training loop is as follows:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data/algo1_t_only.png", width="800">
+                                <figcaption class="caption"> 
+                                    Time Conditioned Training Loop
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p>
+                        I got the precomputed \(\bar\alpha\) from the scheduler. For each time step t, I sampled the noise from a standard normal distribution and added the noise to the image 
+                        according to equation (0). Then, I passed the noise and the normalized t into the model to get the predicted noise, after which I minized the loss. I repeated this process for the number of epochs.
+                    </p>
+
+                    <p>
+                        The training parameters stayed similar except that I used a exponential learning rate scheduler to slow down after each epoch. The number of epochs was increased to 20, and the hidden dimension was decreased to 64.
+                    </p>
+
+                    <p>
+                        Here is the training loss curve through out the 20 epochs:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/time_cond_loss.png", width="800">
+                                <figcaption class="caption"> 
+                                    Time-Conditioned UNet training loss curve
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        Now that I had the trained UNet, I could start to sample from it. To sample, I followed the alogrithm below to reconstruct the clean image at each time step using the noise output form
+                        the model. Here is the algorithm:
+                    </p> 
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data/algo2_t_only.png", width="800">
+                                <figcaption class="caption"> 
+                                    Time-Conditioned UNet sampling algorithm
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        I retrieved the elements from the scheduler and followed the steps outlined in the diagram to iteratively denoise the image. On the high level, the algorithm iteratively inversed the noise adding process.
+                        For each t (from large to small), I estimated the clean image at that time step using the output of the model. Then, I used more information from the scheduler to reconstruct the cleaned image for the next step. 
+                        I repeated for all t from T to 1 and outputed the final image. Here are some results:
+                    </p>
+
+                    <div class="image_container"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/time_results_01.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 1
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/time_results_05.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 5
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/time_results_10.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 10
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/time_results_15.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 15
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/time_results_20.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 20
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of B.2.1-->
+                <h2 id="partB.2.4"> Part B.2.4 - B.2.5: Adding Class Conditiong to UNet</h2>
+
+                <div class="text-container"> 
+                    <p> 
+                        I added two more FCBlocks for the class conditional UNet. Each block takes in the one-hot encoded class condtioner and embeds it to fit the dimension fo the convolutional 
+                        layers. The first embedded class vector was added to the unflattened tensor via direct product (before adding time conditioning). The second class embedding was added to the upsample 1 
+                        tensor through direct product as well before adding time conditioning. I also added a dropout mask to ensure tha we only consider class conditioning 90% of the time.
+                    </p>
+
+                    <p> 
+                       The training loop for this section is very similar to the one for teim conditioning. The only difference was that we needed to use the labels as one-hot encoded condition vector. We also needed
+                       to apply dropout 10% of the time as well.
+                    </p>
+
+                    <p>
+                        The training loop is as follows:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data/algo3_c.png", width="800">
+                                <figcaption class="caption"> 
+                                    Class Conditioned Training Loop
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p>
+                        I got the precomputed \(\bar\alpha\) from the scheduler. For each time step t, I sampled the noise from a standard normal distribution and added the noise to the image 
+                        according to equation (0). Then, I passed the noise and the normalized t into the model to get the predicted noise, after which I minized the loss. I repeated this process for the number of epochs.
+                    </p>
+
+                    <p>
+                        The training parameters stayed similar except that I used a exponential learning rate scheduler to slow down after each epoch. The number of epochs was increased to 20, and the hidden dimension was decreased to 64.
+                    </p>
+
+                    <p>
+                        Here is the training loss curve through out the 20 epochs:
+                    </p>
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/class_losses.jpg", width="800">
+                                <figcaption class="caption"> 
+                                    Class-Conditioned UNet training loss curve
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        Now that I had the trained UNet, I could start to sample from it. To sample, I followed the alogrithm below to reconstruct the clean image at each time step using the noise output form
+                        the model. Here is the algorithm:
+                    </p> 
+
+                    <div class="single_col"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data/algo4_c.png", width="800">
+                                <figcaption class="caption"> 
+                                    Time-Conditioned UNet sampling algorithm
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <p> 
+                        The general approach was similar to the one for time-conditioned UNet. The only difference was that I added an unconditional guidance and added it with the guided
+                        noise under the guidance scale. The process is the same as the CFG in part A. I chose the guidance scale to be 5. Here are some results:
+                    </p>
+
+                    <div class="image_container"> 
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/class_results_1.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 1
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/class_results_5.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 5
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/class_results_10.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 10
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/class_results_15.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 15
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class=image>
+                            <figure> 
+                                <img src="data_B/class_results_20.jpg", width="400">
+                                <figcaption class="caption"> 
+                                    Epoch 20
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>  
+                <!-- End of B.2.5-->
             </div>
         </div>
     </body>
